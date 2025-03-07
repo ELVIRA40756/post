@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Contraseñas Seguras</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #121212;
+            color: #fff;
+        }
+        .container {
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            background: #00bfa5;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background 0.3s;
+            margin: 5px;
+        }
+        button:hover {
+            background: #00897b;
+        }
+        .strength {
+            margin-top: 10px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Generador de Contraseñas Seguras</h2>
+        <input type="text" id="password" readonly>
+        <button onclick="generatePassword()">Generar Contraseña</button>
+        <button onclick="copyPassword()">Copiar</button>
+        <label>
+            Longitud: <input type="number" id="length" min="8" max="32" value="16">
+        </label>
+        <label>
+            <input type="checkbox" id="uppercase" checked> Incluir Mayúsculas
+        </label>
+        <label>
+            <input type="checkbox" id="numbers" checked> Incluir Números
+        </label>
+        <label>
+            <input type="checkbox" id="symbols" checked> Incluir Símbolos
+        </label>
+        <div class="strength" id="strength"></div>
+    </div>
+
+    <script>
+        function generatePassword() {
+            const length = document.getElementById("length").value;
+            const includeUppercase = document.getElementById("uppercase").checked;
+            const includeNumbers = document.getElementById("numbers").checked;
+            const includeSymbols = document.getElementById("symbols").checked;
+            
+            let charset = "abcdefghijklmnopqrstuvwxyz";
+            if (includeUppercase) charset += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            if (includeNumbers) charset += "0123456789";
+            if (includeSymbols) charset += "!@#$%^&*()_+";
+            
+            let password = "";
+            for (let i = 0; i < length; i++) {
+                password += charset.charAt(Math.floor(Math.random() * charset.length));
+            }
+            
+            document.getElementById("password").value = password;
+            evaluateStrength(password);
+        }
+
+        function copyPassword() {
+            const passwordField = document.getElementById("password");
+            passwordField.select();
+            passwordField.setSelectionRange(0, 99999);
+            document.execCommand("copy");
+            alert("Contraseña copiada al portapapeles");
+        }
+
+        function evaluateStrength(password) {
+            let strengthText = "";
+            let score = 0;
+            if (password.length >= 12) score++;
+            if (/[A-Z]/.test(password)) score++;
+            if (/[0-9]/.test(password)) score++;
+            if (/[^a-zA-Z0-9]/.test(password)) score++;
+            
+            if (score === 4) {
+                strengthText = "Fuerza: Alta ✅";
+            } else if (score === 3) {
+                strengthText = "Fuerza: Media ⚠️";
+            } else {
+                strengthText = "Fuerza: Baja ❌";
+            }
+            document.getElementById("strength").textContent = strengthText;
+        }
+    </script>
+</body>
+</html>
